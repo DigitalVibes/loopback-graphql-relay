@@ -119,7 +119,7 @@ function findAllViaThrough(rel, obj, args, context) {
       if (err) {
         return reject(err);
       }
-      response.list = list;
+      response.list = obj[`${rel.name}`]();
       return resolve(response);
     });
 
