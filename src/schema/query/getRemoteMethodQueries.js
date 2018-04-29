@@ -3,6 +3,7 @@
 const _ = require('lodash');
 
 const promisify = require('promisify-node');
+const checkAccess = require("../ACLs");
 const utils = require('../utils');
 const {connectionFromPromisedArray} = require('graphql-relay');
 const allowedVerbs = ['get', 'head'];
@@ -40,21 +41,27 @@ module.exports = function getRemoteMethodQueries(model) {
             _.forEach(acceptingParams, (param, name) => {
               params.push(args[name]);
             });
+          var modelId = args && args.id;
+         return checkAccess({accessToken:context.req.accessToken ,model: model, method: method,id:modelId})
+            .then(() =>{
+              const wrap = promisify(model[method.name]);
 
-            const wrap = promisify(model[method.name]);
+              if (typeObj.list) {
+                if (defaultFindMethods.indexOf(method.name) == -1 && method.returns[0].type.indexOf('any') != -1) {
+                  params = [];
+                  _.forEach(method.accepts, (accept, index) => {
+                    params.push(args[accept.arg]);
+                  });
+                }
 
-            if (typeObj.list) {
-              if (defaultFindMethods.indexOf(method.name) == -1 && method.returns[0].type.indexOf('any') != -1) {
-                params = [];
-                _.forEach(method.accepts, (accept, index) => {
-                  params.push(args[accept.arg]);
-                });
+                return connectionFromPromisedArray(wrap.apply(model, params), args, model);
               }
 
-              return connectionFromPromisedArray(wrap.apply(model, params), args, model);
-            }
-
-            return wrap.apply(model, params);
+              return wrap.apply(model, params);
+            })
+            .catch((err)=>{               
+                 throw  err;
+            }); 
           },
         };
       }
