@@ -1,6 +1,6 @@
 {
-  "name": "loopback-graphql-relay",
-  "version": "1.1.0",
+  "name": "@dvibes/loopback-graphql-relay",
+  "version": "1.1.1",
   "description": "Add Relay based Apollo Server or GraphQL queries on your Loopback server",
   "main": "src/boot.js",
   "directories": {
