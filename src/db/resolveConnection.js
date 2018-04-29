@@ -29,7 +29,7 @@ function connectionFromArray(obj, args, model) {
   };
 
   if (obj.count > 0) {
-    if (obj.list.length > 0) {
+    if (obj && obj.list && obj.list.length > 0) {
       res.pageInfo.startCursor = utils.idToCursor(obj.list[0][idName]);
       res.pageInfo.endCursor = utils.idToCursor(obj.list[obj.list.length - 1][idName]);
     }
