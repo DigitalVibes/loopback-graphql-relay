@@ -14,7 +14,7 @@ module.exports = function(app, schema, opts) {
 
   app.use('/graphiql', graphiqlExpress({
     endpointURL: '/graphql',
-    subscriptionsEndpoint: `ws://${os.networkInterfaces().eth0[0].addres}:${WS_PORT}/`,
+    subscriptionsEndpoint: `ws://${os.networkInterfaces().eth0[0].address}:${WS_PORT}/`,
   }));
 
   app.use('/graphql', bodyParser.json(), graphqlExpress(req => ({
