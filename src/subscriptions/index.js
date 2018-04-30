@@ -5,6 +5,7 @@ const {SubscriptionServer} = require('subscriptions-transport-ws');
 const {execute, subscribe} = require('graphql');
 const bodyParser = require('body-parser');
 const {graphqlExpress, graphiqlExpress} = require('apollo-server-express');
+const os = require('os');
 
 module.exports = function(app, schema, opts) {
   const PORT = 3000;
