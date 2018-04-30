@@ -8,10 +8,12 @@ const {graphqlExpress, graphiqlExpress} = require('apollo-server-express');
 
 module.exports = function(app, schema, opts) {
   const PORT = 3000;
+  const subscriptionOpts = opts.subscriptionServer || {};
+  const WS_PORT = subscriptionOpts.port || 5000;
 
   app.use('/graphiql', graphiqlExpress({
     endpointURL: '/graphql',
-    subscriptionsEndpoint: `ws://localhost:${PORT}/subscriptions`,
+    subscriptionsEndpoint: `ws://${os.networkInterfaces().eth0[0].addres}:${WS_PORT}/`,
   }));
 
   app.use('/graphql', bodyParser.json(), graphqlExpress(req => ({
@@ -33,7 +35,6 @@ module.exports = function(app, schema, opts) {
     console.log(`GraphQL server running on port ${PORT}.`);
   });
 
-  const subscriptionOpts = opts.subscriptionServer || {};
 
   const disable = subscriptionOpts.disable || false;
 
@@ -41,7 +42,6 @@ module.exports = function(app, schema, opts) {
     return;
   }
 
-  const WS_PORT = subscriptionOpts.port || 5000;
   const options = subscriptionOpts.options || {};
   const socketOptions = subscriptionOpts.socketOptions || {};
 
@@ -51,7 +51,7 @@ module.exports = function(app, schema, opts) {
   });
 
   websocketServer.listen(WS_PORT, () => console.log(
-    `Websocket Server is now running on http://localhost:${WS_PORT}`
+    `Websocket Server is now running on ws://${os.networkInterfaces().eth0[0].addres}:${WS_PORT}/`
   ));
 
   SubscriptionServer.create({schema, execute, subscribe}, {server: websocketServer, path: '/'});
